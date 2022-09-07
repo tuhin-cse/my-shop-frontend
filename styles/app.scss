@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind screens;
+
+body {
+    font-family: "Nunito", serif;
+}
+
+@import "partials/dashboard";
+@import "partials/form";
+
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional):before {
+    display: none;
+}
+
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional):after {
+    display: inline-block;
+    margin-left: 4px;
+    margin-top: 2px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: "*";
+}
+
+
+.slim-scroll {
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #aaa;
+    }
+}
+
+.select-38 {
+    .ant-select-selector {
+        height: 37px !important;
+    }
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    position: absolute;
+    z-index: 9999999;
+    background-color: rgba(51, 51, 51, .1);
+}
+
+.loading {
+    border: 8px solid #f3f3f3; /* Light grey */
+    @apply border-t-main;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 80px;
+    -webkit-animation: spinner 1.5s linear infinite;
+    animation: spinner 1.5s linear infinite;
+}
+
+@-webkit-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.bg-img-3 {
+    background-image: url("/img/bg3.jpg");
+}
+
+.rdrInputRanges {
+    display: none !important;
+}
+
+.home-layout {
+    .container {
+        max-width: 1200px;
+    }
+
+    .header, footer {
+        .menu {
+            li {
+                @apply inline-block ml-5;
+            }
+        }
+    }
+}
+
+
+.container {
+    max-width: 1200px;
+}
+
+.bg-gray-1 {
+    background: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
+}
+
+.bg-gray-2 {
+    background: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+}
+
+/**
+ * ==============================================
+ * Dot Typing
+ * ==============================================
+ */
+.dot-typing {
+    position: relative;
+    left: -9999px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #ffffff;
+    box-shadow: 9984px 0 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    animation: dotTyping 1.5s infinite linear;
+}
+
+@keyframes dotTyping {
+    0% {
+        box-shadow: 9984px 0 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    }
+    16.667% {
+        box-shadow: 9984px -10px 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    }
+    33.333% {
+        box-shadow: 9984px 0 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    }
+    50% {
+        box-shadow: 9984px 0 0 0 #ffffff, 9999px -10px 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    }
+    66.667% {
+        box-shadow: 9984px 0 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    }
+    83.333% {
+        box-shadow: 9984px 0 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px -10px 0 0 #ffffff;
+    }
+    100% {
+        box-shadow: 9984px 0 0 0 #ffffff, 9999px 0 0 0 #ffffff, 10014px 0 0 0 #ffffff;
+    }
+}
+
+.data-card {
+    @apply flex justify-between text-white p-4 mb-4 rounded;
+    span:first-child {
+        font-size: 17px;
+    }
+
+    span:last-child {
+        font-size: 19px;
+        font-weight: 700;
+    }
+}
+
+.bg-strong-bliss {
+    background-image: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%) !important;
+}
+
+.bg-vicious-stance {
+    background-image: linear-gradient(60deg, #29323c 0%, #485563 100%) !important;
+}
+
+.bg-midnight-bloom {
+    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%) !important;
+}
+
+.bg-mixed-hopes {
+    background-image: linear-gradient(to top, #c471f5 0%, #fa71cd 100%) !important;
+}
+
