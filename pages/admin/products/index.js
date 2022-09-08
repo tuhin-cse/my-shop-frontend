@@ -6,11 +6,9 @@ import {useFetch} from "../../../helpers/hooks";
 import Table, {TableImage} from "../../../components/common/table";
 import {useRouter} from "next/router";
 import {Select} from "antd";
-import {useI18n} from "../../../contexts/i18n";
 
 const Products = () => {
     const router = useRouter()
-    const i18n = useI18n()
     const [categories] = useFetch(fetchCategories)
     const [products, getProducts, {loading, error}] = useFetch(fetchProducts)
     let columns = [
@@ -53,7 +51,7 @@ const Products = () => {
                     <>
                         <Select
                             className="w-44 select-38 me-3"
-                            placeholder={i18n.t('Category')}
+                            placeholder={'Category'}
                             onClear={() => {
                                 getProducts({category: undefined})
                             }}
@@ -63,15 +61,15 @@ const Products = () => {
                             options={categories?.map(d => ({label: d?.name, value: d._id}))} allowClear/>
                         <Select
                             className="w-44 select-38 me-3"
-                            placeholder={i18n.t('Status')}
+                            placeholder={'Status'}
                             onClear={() => {
                                 getProducts({status: undefined})
                             }}
                             onSelect={value => {
                                 getProducts({status: value})
                             }}
-                            options={[{label: i18n.t('Active'), value: true}, {
-                                label: i18n.t('Inactive'),
+                            options={[{label: 'Active', value: true}, {
+                                label: 'Inactive',
                                 value: false
                             }]}
                             allowClear/>

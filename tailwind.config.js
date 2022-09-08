@@ -3,8 +3,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        main: '#626fe6',
-        main2: '#525fd6',
+        main: '#5753C9',
+        main2: '#3D4E81',
+        sidebar: '#283C6D',
         light: '#F3F4F9',
       },
       spacing: {

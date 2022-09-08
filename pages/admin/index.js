@@ -5,7 +5,6 @@ import {FaArchive, FaDollarSign, FaShoppingBag} from "react-icons/fa";
 import {useFetch} from "../../helpers/hooks";
 import {fetchDashboard} from "../../helpers/backend_helper";
 import moment from "moment";
-import {useI18n} from "../../contexts/i18n";
 
 const Dashboard = () => {
     const [dashboard] = useFetch(fetchDashboard, {date: moment().startOf('day').toISOString()})
@@ -67,17 +66,16 @@ export default Dashboard
 
 
 const DashboardCard = ({title, label, value, child, stats, icon: Icon}) => {
-    const i18n = useI18n()
     return (
         <Card style={{color: '#6c757d'}}>
             <div className="h-20 mb-2">
-                {title && <div className="card-stats-title mb-3">{i18n.t(title)}</div>}
+                {title && <div className="card-stats-title mb-3">{title}</div>}
                 {child && (
                     <div className="flex justify-evenly text-center">
                         {child?.map((d, index) => (
                             <div className="card-stats-item" key={index}>
                                 <div className="card-stats-item-count">{d?.value}</div>
-                                <div className="card-stats-item-label">{i18n.t(d?.label)}</div>
+                                <div className="card-stats-item-label">{d?.label}</div>
                             </div>
                         ))}
                     </div>
@@ -90,7 +88,7 @@ const DashboardCard = ({title, label, value, child, stats, icon: Icon}) => {
                     </div>
                 </div>
                 <div className="p-2">
-                    <p className="text-sm">{i18n.t(label)}</p>
+                    <p className="text-sm">{label}</p>
                     <div className="card-stats-value">
                         {value}
                     </div>

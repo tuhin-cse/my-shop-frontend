@@ -5,12 +5,9 @@ import PageTitle from "../../../components/common/page-title";
 import Table, {TableImage} from "../../../components/common/table";
 import UserLayout from "../../../layouts/user";
 import {useRouter} from "next/router";
-import {useUserContext} from "../../../contexts/user";
-import {useI18n} from "../../../contexts/i18n";
 
 const Categories = () => {
     const router = useRouter()
-    const i18n = useI18n()
 
     const [categories, getCategories, {loading, error}] = useFetch(fetchCategories)
     let columns = [
@@ -19,12 +16,7 @@ const Categories = () => {
         {
             dataField: 'active',
             text: 'Status',
-            formatter: d => <span className={d ? 'text-blue-600' : 'text-red-600'}>{d ? i18n.t('Active') : i18n.t('Inactive')}</span>
-        },
-        {
-            dataField: '_id',
-            text: 'Sub Category',
-            formatter: d => <button onClick={() => router.push('/admin/categories/' + d)} className="btn btn-success btn-sm"> {i18n.t("Sub Category")}</button>
+            formatter: d => <span className={d ? 'text-blue-600' : 'text-red-600'}>{d ? 'Active' : 'Inactive'}</span>
         },
     ]
     let action = <Button

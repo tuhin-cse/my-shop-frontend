@@ -6,18 +6,15 @@ import {useUserContext} from "../../contexts/user";
 import {FiBell, FiChevronDown, FiUser} from "react-icons/fi";
 import {useFetch, userOutSideClick} from "../../helpers/hooks";
 import {useRouter} from "next/router";
-import {useI18n} from "../../contexts/i18n";
-import {NavDropdown} from "react-bootstrap";
 import {fetchUnreadNotifications, postNotificationRead} from "../../helpers/backend_helper";
 import {io} from "socket.io-client";
 
 const Header = () => {
-    const i18n = useI18n()
     const {permissions} = useUserContext()
 
     return (
         <header className="header">
-            <div className="h-16 px-4 text-white flex justify-between items-center">
+            <div className="h-16 px-4 text-gray-600 flex justify-between items-center">
                 <div>
                     <FaBars size={18} role="button" onClick={() => {
                         document.querySelector('.dashboard')?.classList.toggle(window.innerWidth > 1024 ? 'mini' : 'mobile')
@@ -34,15 +31,6 @@ const Header = () => {
                         </Link>
                     )}
                     <Notifications/>
-                    <NavDropdown
-                        title={i18n?.languages?.find(l => l.key === i18n.lang)?.label}
-                        className="language-selector"
-                    >
-                        {i18n?.languages?.map((l, index) => (
-                            <NavDropdown.Item onClick={() => i18n.changeLang(l.key)}
-                                              key={index}>{l.label}</NavDropdown.Item>
-                        ))}
-                    </NavDropdown>
                     <Menu/>
                 </div>
             </div>
@@ -59,7 +47,6 @@ const Notifications = () => {
         setShow(false)
     })
     const router = useRouter()
-    const i18n = useI18n()
     const [notifications, getNotification] = useFetch(fetchUnreadNotifications, {}, false)
 
     useEffect(() => {
@@ -82,7 +69,7 @@ const Notifications = () => {
                 <FiBell className="" size={17}/>
             </div>
             <div
-                className={`${show ? 'absolute' : 'hidden'}  ${i18n.direction === 'rtl' ? 'left-0' : 'right-0'} mt-2 max-w-lg bg-white rounded shadow-xl z-20`}>
+                className={`${show ? 'absolute' : 'hidden'}  right-0 mt-2 max-w-lg bg-white rounded shadow-xl z-20`}>
                 <h4 className="px-2 py-1 border-b mb-2">Notifications</h4>
                 <div className="relative w-100 " style={{minWidth: 300}}>
                     {!!notifications?.totalDocs ? (
@@ -151,8 +138,6 @@ const Menu = () => {
         )
     }
 
-    const i18n = useI18n()
-
 
     return (
         <div className="relative" ref={ref}>
@@ -168,7 +153,7 @@ const Menu = () => {
                 <FiChevronDown className="mt-1.5 ml-1"/>
             </div>
             <div
-                className={`${show ? 'absolute' : 'hidden'}  ${i18n.direction === 'rtl' ? 'left-0' : 'right-0'} mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20`}>
+                className={`${show ? 'absolute' : 'hidden'}  right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20`}>
                 <NavLink label="Your Profile" href="/admin/profile"/>
                 <a onClick={() => {
                     localStorage.removeItem('authToken')

@@ -1,6 +1,5 @@
 import React from "react"
 import {Form, Select} from "antd"
-import {useI18n} from "../../contexts/i18n";
 import reactElementToJSXString from 'react-element-to-jsx-string';
 
 const FormSelect = ({
@@ -19,7 +18,6 @@ const FormSelect = ({
                         clearable = false,
                         ...rest
                     }) => {
-    const i18n = useI18n()
     let initRules = [
         {required: required, message: `Please select ${label || 'a option'}`},
     ]
@@ -27,7 +25,7 @@ const FormSelect = ({
         <Form.Item
             name={name}
             style={{pointerEvents: disabled ? 'none' : undefined, cursor: disabled ? 'not-allowed' : undefined}}
-            label={!!i18n.t && label ? i18n.t(label) : label}
+            label={label}
             initialValue={initialValue}
             rules={[...initRules, ...rules]}
         >

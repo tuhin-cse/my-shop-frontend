@@ -1,5 +1,4 @@
 import {FiSearch} from "react-icons/fi";
-import {useI18n} from "../../contexts/i18n";
 
 const SearchInput = ({className, value, onChange}) => {
     return (

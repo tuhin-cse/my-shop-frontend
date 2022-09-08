@@ -11,10 +11,8 @@ import {fetchSettings, postSettings} from "../../../helpers/backend_helper";
 import ImageInput from "../../../components/form/image";
 import FormSelect from "../../../components/form/select";
 import {uploadImage} from "../../../helpers/image";
-import {useI18n} from "../../../contexts/i18n";
 
 const Home = () => {
-    const i18n = useI18n()
     const [form] = Form.useForm()
     const [settings, getSettings] = useFetch(fetchSettings)
     const [logo, setLogo] = useState('/img/shops.png')
@@ -54,7 +52,7 @@ const Home = () => {
                         <FormInput name="currency_code" label="Currency Code" required/>
                     </Col>
                     <Col md={6}>
-                        <Form.Item name="logo" label={i18n.t("Site Logo")}>
+                        <Form.Item name="logo" label={"Site Logo"}>
                             <ImageInput onSelect={setLogo}/>
                         </Form.Item>
                         <img className="h-28 pb-4" src={logo} alt=""/>
@@ -224,7 +222,7 @@ const Home = () => {
                                 onClick={() => setActive(index)}
                                 className={`px-4 py-2 text-sm ${active === index ? 'bg-main text-white' : ''}`}
                                 role="button" key={index}>
-                                {i18n.t(option.label)}
+                                {option.label}
                             </div>
                         ))}
                     </div>
@@ -232,7 +230,7 @@ const Home = () => {
                 <Col md={9}>
                     <Card>
                         <div className="border mb-3 p-2 text-main inline-block">
-                            {i18n.t(options[active].label)}
+                            {options[active].label}
                         </div>
                         <Form layout="vertical" form={form} onFinish={async values => {
                             values.logo = await uploadImage(values.logo, logo)
@@ -241,7 +239,7 @@ const Home = () => {
                             })
                         }}>
                             {options[active]?.form}
-                            <Button>{i18n.t('Submit')}</Button>
+                            <Button>{'Submit'}</Button>
                         </Form>
                     </Card>
                 </Col>

@@ -117,6 +117,18 @@ body {
     background: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
 }
 
+.bg-gray-3 {
+    background: linear-gradient(69.9deg, rgb(76, 79, 106) 3.2%, rgb(118, 124, 163) 97.6%);
+}
+
+.bg-dark-1 {
+    background: linear-gradient(112.1deg, rgb(32, 38, 57) 11.4%, rgb(63, 76, 119) 70.2%);
+}
+
+.bg-blue-1 {
+    background: radial-gradient(circle at 10% 20%, rgb(75, 108, 183) 0%, rgb(55, 82, 141) 90%);
+}
+
 /**
  * ==============================================
  * Dot Typing

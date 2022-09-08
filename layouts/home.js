@@ -18,7 +18,11 @@ const HomeLayout = ({children}) => {
             <main className="home-layout">
                 <div className="container">
                     <header className="h-20 flex justify-between items-center header">
-                        <img src={settings?.logo} className="h-20"/>
+                        {settings?.logo ? (
+                            <img src={settings?.logo} alt="" className="h-20"/>
+                        ) : (
+                            <h2 className="text-lg font-semibold text-gray-600">{settings?.shop_name}</h2>
+                        )}
                         <ul className="menu">
                             <li>
                                 <Link href="/">Home</Link>
@@ -45,11 +49,9 @@ const HomeLayout = ({children}) => {
                                     </li>
                                 </>
                             )}
-
                         </ul>
                     </header>
                     {children}
-
                     <hr/>
                     <footer className="py-3 text-gray-500 text-sm flex justify-between">
                         <p>  {settings?.site_footer} <a className="text-primary"

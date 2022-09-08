@@ -13,11 +13,9 @@ import ImageInput from "../../../components/form/image";
 import {useState} from "react";
 import {useRouter} from "next/router";
 import {uploadImage} from "../../../helpers/image";
-import {useI18n} from "../../../contexts/i18n";
 
 const AddProduct = () => {
     const [image, setImage] = useState('/img/product.png')
-    const [subCategories, getSubCategories] = useFetch(fetchCategories, {}, false)
     return (
         <>
             <PageTitle
@@ -26,8 +24,7 @@ const AddProduct = () => {
                     {label: 'Dashboard', href: '/'},
                     {label: 'Products', href: '/products'},
                     {label: 'Add Product'}]}/>
-            <ProductForm image={image} setImage={setImage} subCategories={subCategories}
-                         getSubCategories={getSubCategories}/>
+            <ProductForm image={image} setImage={setImage}/>
         </>
     )
 }
@@ -35,10 +32,9 @@ AddProduct.layout = UserLayout
 export default AddProduct
 
 
-export const ProductForm = ({form, image, setImage, subCategories, getSubCategories}) => {
+export const ProductForm = ({form, image, setImage}) => {
     const [categories] = useFetch(fetchCategories)
     const router = useRouter()
-    const i18n = useI18n()
     const handleProductAdd = async values => {
         values.image = await uploadImage(values.image, image)
         return useAction(postProduct, values, () => {
@@ -56,38 +52,21 @@ export const ProductForm = ({form, image, setImage, subCategories, getSubCategor
                         <Row>
                             <Col md={6}>
                                 <FormSelect
-                                    name="categories"
+                                    name="category"
                                     label="Categories"
-                                    initialValue={[]}
                                     options={categories}
-                                    onChange={value => {
-                                        getSubCategories({parents: value})
-                                    }}
-                                    isMulti
                                     required/>
                             </Col>
                             <Col md={6}>
-                                <FormSelect name="sub_categories" label="Sub Categories"
-                                            initialValue={[]}
-                                            options={subCategories}
-                                            isMulti/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={6}>
-                                <FormInput name="quantity" label="Product Quantity" type="number" required/>
-                            </Col>
-                            <Col md={6}>
-                                <FormSelect name="unit" label="Quantity Type"
+                                <FormSelect name="unit" label="Unit"
                                             options={[
+                                                {label: 'Piece', value: 'Piece'},
                                                 {label: 'Litre', value: 'litre'},
                                                 {label: 'KG', value: 'kg'},
                                                 {label: 'GM', value: 'gm'}
                                             ]}
                                             required/>
                             </Col>
-                        </Row>
-                        <Row>
                             <Col md={6}>
                                 <FormInput name="code" label="Barcode" required/>
                             </Col>
@@ -102,7 +81,7 @@ export const ProductForm = ({form, image, setImage, subCategories, getSubCategor
                             </Col>
                         </Row>
                         <FormInput name="description" label="Description" textArea/>
-                        <Form.Item name="image" label={i18n.t("Image")}>
+                        <Form.Item name="image" label={"Image"}>
                             <ImageInput onSelect={setImage}/>
                         </Form.Item>
                         <img className="h-32 pb-4" src={image} alt=""/>

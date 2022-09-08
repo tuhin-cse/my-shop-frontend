@@ -9,7 +9,7 @@ const PageTitle = ({title, breadcrumbs = [], appTitle, hidden = false}) => {
             <Head>
                 <title>{appTitle || title} | {site?.shop_name}</title>
             </Head>
-            <div className="bg-white px-6 py-3 rounded flex justify-between item-center shadow-sm mb-6"
+            <div className="flex justify-between item-center mb-3"
                  style={{display: hidden ? 'none' : 'block'}}>
                 <h1 className="text-xl font-semibold text-gray-600 tracking-wider">{title}</h1>
                 {/*<ul className="hidden sm:block">*/}

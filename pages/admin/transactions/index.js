@@ -1,26 +1,16 @@
 import UserLayout from "../../../layouts/user";
 import PageTitle from "../../../components/common/page-title";
 import {useFetch} from "../../../helpers/hooks";
-import {
-    fetchPosTransactions, fetchTransactionElements,
-    fetchTransactionReportElements,
-    fetchTransactionReportRounds, fetchTransactionRounds
-} from "../../../helpers/backend_helper";
+import {fetchPosTransactions, fetchTransactionElements, fetchTransactionRounds} from "../../../helpers/backend_helper";
 import Table from "../../../components/common/table";
 import moment from "moment";
 import {useState} from "react";
 import {FaPrint} from "react-icons/fa";
 import {useRouter} from "next/router";
-import {useI18n} from "../../../contexts/i18n";
-import {Form, Select} from "antd";
-import {Col, Row} from "react-bootstrap";
-import FormSelect from "../../../components/form/select";
-import DateRange from "../../../components/form/date-range";
-import Button from "../../../components/common/button";
+import {Select} from "antd";
 import {useSite} from "../../../contexts/site";
 
 const Transactions = () => {
-    const i18n = useI18n()
     const router = useRouter()
     const [card, setCard] = useState()
     const [elements] = useFetch(fetchTransactionElements)
@@ -38,7 +28,7 @@ const Transactions = () => {
         },
         {
             dataField: 'sale',
-            text: `${i18n.t('Project')} / ${i18n.t('Round')}`,
+            text: 'AA',
             formatter: (_, d) => `${d?.project?.name} / ${d?.round?.name}`
         },
         {dataField: 'createdAt', text: 'Date', formatter: d => moment(d).format('Do MMM, YYYY')},
@@ -78,7 +68,7 @@ const Transactions = () => {
                             <>
                                 <Select
                                     className="w-44 select-38 me-3"
-                                    placeholder={i18n.t('Project')}
+                                    placeholder={'Project'}
                                     onClear={() => {
                                         getTransactions({project: undefined})
                                     }}
@@ -90,7 +80,7 @@ const Transactions = () => {
                                     allowClear/>
                                 <Select
                                     className="w-44 select-38 me-3"
-                                    placeholder={i18n.t('Round')}
+                                    placeholder={'Round'}
                                     onClear={() => {
                                         getTransactions({round: undefined})
                                     }}
@@ -135,7 +125,6 @@ export default Transactions
 
 
 export const InvoiceDetails = ({invoice}) => {
-    const i18n = useI18n()
     const site = useSite()
     console.log(site)
     return (
@@ -167,16 +156,16 @@ export const InvoiceDetails = ({invoice}) => {
                     </div>
                     <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 8}}>
                         <div>
-                            <p className="text-sm">{i18n.t("Project name")}: {invoice?.project?.name}</p>
-                            <p className="text-sm">{i18n.t("Round Name")} : {invoice?.round?.name}</p>
+                            <p className="text-sm">Project name: {invoice?.project?.name}</p>
+                            <p className="text-sm">Round Name : {invoice?.round?.name}</p>
                         </div>
                         <div>
-                            <p className="text-sm">{i18n.t("Sale No")}:
+                            <p className="text-sm">Sale No:
                                 #{invoice?.ref?.toString().padStart(4, '0')}</p>
-                            <p className="text-sm">{i18n.t("Date")}: {moment(invoice?.createdAt).format('DD-MM-YYYY HH:mm:ss')}</p>
+                            <p className="text-sm">Date: {moment(invoice?.createdAt).format('DD-MM-YYYY HH:mm:ss')}</p>
                         </div>
                     </div>
-                    <p className="text-sm mb-2">{i18n.t("Card")}: {invoice?.card?.card?.split('').map((d, index) => `${index && index % 4 === 0 ? '-' : ''}${d}`)}</p>
+                    <p className="text-sm mb-2">Card: {invoice?.card?.card?.split('').map((d, index) => `${index && index % 4 === 0 ? '-' : ''}${d}`)}</p>
                     <hr/>
                     <div style={{marginBottom: 4}}></div>
                     {invoice?.items?.map((p, index) => (
@@ -193,12 +182,12 @@ export const InvoiceDetails = ({invoice}) => {
                     ))}
                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                         <p className="text-sm text-bold"
-                        >{i18n.t("Total")}</p>
+                        >Total</p>
                         <p className="text-sm text-bold">$ {invoice?.total}</p>
                     </div>
                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                         <p className="text-sm text-bold"
-                        >{i18n.t("Paid")}</p>
+                        >"Paid</p>
                         <p className="text-sm text-bold">$ {invoice?.total}</p>
                     </div>
                 </div>

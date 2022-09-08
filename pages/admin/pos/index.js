@@ -1,32 +1,20 @@
 import UserLayout from "../../../layouts/user";
 import {Col, Row} from "react-bootstrap";
 import Card from "../../../components/common/card";
-import {Form, Modal, Select} from "antd";
+import {Form, Modal} from "antd";
 import {FiTrash} from "react-icons/fi";
 import {useEffect, useState} from "react";
 import {useAction, useFetch} from "../../../helpers/hooks";
-import {
-    fetchPosElements,
-    fetchPosProducts,
-    getCardNFC,
-    postPosOrder,
-    postVerifyCard
-} from "../../../helpers/backend_helper";
+import {fetchPosElements, fetchPosProducts, postPosOrder} from "../../../helpers/backend_helper";
 import swalAlert, {antdAlert} from "../../../components/common/alert";
 import Head from "next/head";
 import {handleInvoicePrint, InvoiceDetails} from "../transactions";
-import {AiOutlineQrcode} from "react-icons/ai";
-import {QrReader} from "react-qr-reader";
-import FormInput, {HiddenFormItem} from "../../../components/form/input";
+import FormInput from "../../../components/form/input";
 import Button from "../../../components/common/button";
 import {RiArrowUpDownFill} from "react-icons/ri";
-import {useI18n} from "../../../contexts/i18n";
 import {useSite} from "../../../contexts/site";
-import moment from "moment";
-import {FcNfcSign} from "react-icons/fc";
 
 const Pos = () => {
-    const i18n = useI18n()
     const site = useSite()
     const [passForm] = Form.useForm()
     const [paymentForm] = Form.useForm()
@@ -205,14 +193,13 @@ const Pos = () => {
             <>
                 <div className="flex justify-between flex-wrap">
                     <div className="flex items-center mb-2 w-full sm:w-auto">
-                        <label> {i18n.t('Shop')} : {currentShop?.name}</label>
                         <RiArrowUpDownFill
                             className="mx-2"
                             role="button"
                             onClick={() => setVisibleSelector(true)}/>
                     </div>
                     <div className="w-full md:w-72">
-                        <input className="form-input mb-2" placeholder={i18n.t('Barcode')} value={barcode}
+                        <input className="form-input mb-2" placeholder={'Barcode'} value={barcode}
                                onChange={e => setBarcode(e.target.value)}/>
                     </div>
                 </div>
@@ -233,41 +220,8 @@ const Pos = () => {
     return (
         <>
             <Head>
-                <title>{!!i18n.t ? i18n.t("POS") : "POS"} | {site?.site_name}</title>
+                <title>POS | {site?.site_name}</title>
             </Head>
-            <Modal
-                visible={visibleSelector}
-                onCancel={() => setVisibleSelector(false)}
-                maskClosable={!!currentShop}
-                title={i18n.t('Select Shop')} closable={!!currentShop} footer={null}>
-                {elements?.shops?.map((shop, index) => (
-                    <button
-                        key={index}
-                        className={`btn ${currentShop?._id === shop?._id
-                            ? 'btn-primary' :
-                            'btn-outline-primary'}  w-full mb-3`}
-                        onClick={async () => {
-                            if (cart?.length > 0) {
-                                let {isConfirmed} = await swalAlert.confirm('Changing Shop will clear all thing.', 'Yes, Clear')
-                                if (isConfirmed) {
-                                    setCart([])
-                                    setCard('')
-                                    setDetails(undefined)
-                                    setProject(undefined)
-                                } else {
-                                    setVisibleSelector(false)
-                                    return
-                                }
-                            }
-                            setCurrentShop(shop)
-                            localStorage.setItem('currentShop', shop._id)
-                            setVisibleSelector(false)
-                        }}
-                    >
-                        {shop?.name}
-                    </button>
-                ))}
-            </Modal>
             <Row>
                 <Col md={7} className="hidden md:block">
                     <Card style={{minHeight: 'calc(100vh - 120px)'}}>
@@ -278,246 +232,146 @@ const Pos = () => {
                     <Card style={{minHeight: 'max(500px, calc(100vh - 120px))'}}>
                         <div>
                             <div className="relative">
-                                <div className="ant-form-item-label">
-                                    <label>{i18n.t('Card Number')}</label>
+                                <div className="md:hidden mt-4">
+                                    <ShopProducts/>
                                 </div>
-                                <input
-                                    value={card}
-                                    onChange={e => handleCardChange(e.target.value)}
-                                    placeholder="7489-XXXX-XXXX-XXXX"
-                                    className="form-input mb-3"
-                                    style={{paddingRight: 70}}/>
-                                <AiOutlineQrcode className="absolute right-10 top-10" size={24} role="button"
-                                                 onClick={() => setVisibleQr(true)}/>
-                                <FcNfcSign
-                                    className="absolute right-3 top-10"
-                                    size={24} role="button"
-                                    onClick={async () => {
-                                        try {
-                                            const ndef = new NDEFReader();
-                                            await ndef.scan();
-                                            ndef.addEventListener("readingerror", async () => {
-                                                await swalAlert.error("Argh! Cannot read data from the NFC tag. Try another one?");
-                                            });
-                                            ndef.addEventListener("reading", ({serialNumber}) => {
-                                                useAction(getCardNFC, {nfc: serialNumber}, data => {
-                                                    handleCardChange(data.card)
-                                                }, false)
-                                            });
-                                        } catch (error) {
-                                            await swalAlert.error("Argh! " + error);
-                                        }
-                                    }}/>
-                            </div>
-                            <Modal title="Scan Qr Code" style={{marginTop: 80}} footer={null}
-                                   visible={visibleQr} onCancel={() => setVisibleQr(false)} destroyOnClose>
-                                <QrReader
-                                    onResult={(result, error) => {
-                                        if (!!result) {
-                                            handleCardChange(result?.text);
-                                            setVisibleQr(false)
-                                        }
-                                    }}
-                                    constraints={{facingMode: "environment"}}
-                                    style={{width: "100%", height: "100%"}}
-                                />
-                            </Modal>
-                            <Modal title={i18n.t('Verify Card')} style={{marginTop: 80}} footer={null}
-                                   visible={visiblePass}
-                                   onCancel={() => {
-                                       setVisiblePass(false)
-                                       passForm.resetFields()
-                                   }} destroyOnClose>
-                                <Form form={passForm} layout="vertical" onFinish={values => {
-                                    return useAction(postVerifyCard, {
-                                        ...values,
-                                        password: encryptPassword(values.password),
-                                        date: moment(),
-                                        shop: currentShop?._id
-                                    }, d => {
-                                        setDetails(d)
-                                        setCart([])
-                                        setVisiblePass(false)
-                                        passForm.resetFields()
-                                    }, false)
-                                }}>
-                                    <HiddenFormItem name="card"/>
-                                    <FormInput name="password" label="Password"
-                                               style={{webkitTextSecurity: 'disc'}} autoComplete="off"/>
-                                    <Button>Verify</Button>
-                                </Form>
-                            </Modal>
-                            <Row>
-                                <Col sm={6}>
-                                    <div className="ant-form-item-label">
-                                        <label>{i18n.t('Card User')}</label>
-                                    </div>
-                                    <input className="form-input mb-3" value={details?.name || ''} readOnly/>
-                                </Col>
-                                <Col sm={6}>
-                                    <div className="ant-form-item-label">
-                                        <label>{i18n.t('Card Balance')}</label>
-                                    </div>
-                                    <div>
-                                        {details?.balances?.length > 1 ? (
-                                            <Select
-                                                className="w-full select-38"
-                                                value={project}
-                                                onChange={project => {
-                                                    setProject(project)
-                                                    setCart([])
-                                                }}
-                                                options={details?.balances?.map(d => ({
-                                                    label: `${d?.project?.name} - ${d?.balance}`,
-                                                    value: d?.project?._id
-                                                }))}
-                                            />
-                                        ) : (
-                                            <input className="form-input mb-3"
-                                                   value={details?.balances?.length === 1 ? details?.balances[0]?.balance : '0'}
-                                                   readOnly/>
-                                        )}
-                                    </div>
-
-                                </Col>
-                            </Row>
-                            <div className="md:hidden mt-4">
-                                <ShopProducts/>
-                            </div>
-                            <div className="overflow-auto mt-3 slim-scroll"
-                                 style={{height: 'max(calc(100vh - 500px), 300px)'}}>
-                                <table className="table-auto w-full">
-                                    <thead
-                                        className="text-xs font-semibold uppercase text-gray-400 bg-gray-50 sticky top-0 z-10">
-                                    <tr>
-                                        <th className="p-2 whitespace-nowrap">
-                                            <div className="font-semibold text-left">#</div>
-                                        </th>
-                                        <th className="p-2 whitespace-nowrap">
-                                            <div className="font-semibold text-left">{i18n.t('Product')} </div>
-                                        </th>
-                                        <th className="p-2 whitespace-nowrap w-24">
-                                            <div className="font-semibold text-center">{i18n.t('Price')} </div>
-                                        </th>
-                                        <th className="p-2 whitespace-nowrap w-24">
-                                            <div className="font-semibold text-center">{i18n.t('Quantity')} </div>
-                                        </th>
-                                        <th className="p-2 whitespace-nowrap w-24">
-                                            <div className="font-semibold text-end">{i18n.t('Subtotal')} </div>
-                                        </th>
-                                        <th className="p-2 whitespace-nowrap text-end" style={{width: 80}}/>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {cart?.map((product, index) => (
-                                        <tr key={index}>
-                                            <td className="p-2 h-8 whitespace-nowrap text-gray-500">{index + 1} </td>
-                                            <td className="p-2 whitespace-nowrap text-gray-500 ">{product?.name}</td>
-                                            <td className="p-2 whitespace-nowrap text-gray-500 ">{product?.price}</td>
-                                            <td className="p-2 whitespace-nowrap text-gray-500 w-24">
-                                                <input
-                                                    type="number"
-                                                    className="w-full focus:outline-none text-center"
-                                                    value={product?.quantity}
-                                                    autoComplete="off"
-                                                    step={0.5}
-                                                    onChange={e => {
-                                                        let previous = product.quantity
-                                                        product.quantity = !!e.target.value ? Math.abs(+e.target.value) : ''
-                                                        let total = cart?.reduce((acc, d) => acc + ((d?.quantity * d.price) || 0), 0) || 0
-                                                        if(total > balance) {
-                                                            product.quantity = previous
-                                                            antdAlert.warning('Insufficient balance', '')
-                                                        }
-                                                        reload()
-                                                    }}
-                                                />
-                                            </td>
-                                            <td className="p-2 whitespace-nowrap text-gray-500 text-end">{((product?.price || 0) * (product?.quantity || 0)).toFixed(2)}</td>
-                                            <td className="text-right px-2">
-                                                <FiTrash
-                                                    className="inline-block text-danger inline-block"
-                                                    role="button"
-                                                    onClick={() => {
-                                                        setCart(cart?.filter(d => d._id !== product._id))
-                                                    }}
-                                                    size={18}/>
-                                            </td>
+                                <div className="overflow-auto mt-3 slim-scroll"
+                                     style={{height: 'max(calc(100vh - 500px), 300px)'}}>
+                                    <table className="table-auto w-full">
+                                        <thead
+                                            className="text-xs font-semibold uppercase text-gray-400 bg-gray-50 sticky top-0 z-10">
+                                        <tr>
+                                            <th className="p-2 whitespace-nowrap">
+                                                <div className="font-semibold text-left">#</div>
+                                            </th>
+                                            <th className="p-2 whitespace-nowrap">
+                                                <div className="font-semibold text-left">{'Product'} </div>
+                                            </th>
+                                            <th className="p-2 whitespace-nowrap w-24">
+                                                <div className="font-semibold text-center">{'Price'} </div>
+                                            </th>
+                                            <th className="p-2 whitespace-nowrap w-24">
+                                                <div className="font-semibold text-center">{'Quantity'} </div>
+                                            </th>
+                                            <th className="p-2 whitespace-nowrap w-24">
+                                                <div className="font-semibold text-end">{'Subtotal'} </div>
+                                            </th>
+                                            <th className="p-2 whitespace-nowrap text-end" style={{width: 80}}/>
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        {cart?.map((product, index) => (
+                                            <tr key={index}>
+                                                <td className="p-2 h-8 whitespace-nowrap text-gray-500">{index + 1} </td>
+                                                <td className="p-2 whitespace-nowrap text-gray-500 ">{product?.name}</td>
+                                                <td className="p-2 whitespace-nowrap text-gray-500 ">{product?.price}</td>
+                                                <td className="p-2 whitespace-nowrap text-gray-500 w-24">
+                                                    <input
+                                                        type="number"
+                                                        className="w-full focus:outline-none text-center"
+                                                        value={product?.quantity}
+                                                        autoComplete="off"
+                                                        step={0.5}
+                                                        onChange={e => {
+                                                            let previous = product.quantity
+                                                            product.quantity = !!e.target.value ? Math.abs(+e.target.value) : ''
+                                                            let total = cart?.reduce((acc, d) => acc + ((d?.quantity * d.price) || 0), 0) || 0
+                                                            if (total > balance) {
+                                                                product.quantity = previous
+                                                                antdAlert.warning('Insufficient balance', '')
+                                                            }
+                                                            reload()
+                                                        }}
+                                                    />
+                                                </td>
+                                                <td className="p-2 whitespace-nowrap text-gray-500 text-end">{((product?.price || 0) * (product?.quantity || 0)).toFixed(2)}</td>
+                                                <td className="text-right px-2">
+                                                    <FiTrash
+                                                        className="inline-block text-danger inline-block"
+                                                        role="button"
+                                                        onClick={() => {
+                                                            setCart(cart?.filter(d => d._id !== product._id))
+                                                        }}
+                                                        size={18}/>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table className="w-full mt-3.5">
+                                        <tbody>
+                                        <tr className="text-xs font-semibold uppercase text-gray-500 bg-gray-50">
+                                            <td className="border-none p-2 text-gray-500">Total Items</td>
+                                            <td className="border-none p-2 text-gray-500 text-right">{cart?.length}</td>
+                                            <td className="border-none p-2 text-gray-500">Total</td>
+                                            <td className="border-none p-2 text-gray-500 text-end">{total.toFixed(2)}</td>
+                                        </tr>
+                                        <tr className="text-xs font-semibold uppercase text-gray-500 bg-blue-400">
+                                            <td className="border-none p-2 text-white"
+                                                colSpan={2}>Total Payable
+                                            </td>
+                                            <td className="border-none p-2 text-white text-right"
+                                                colSpan={2}>{total.toFixed(2)}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <Modal
+                                    visible={visiblePayment}
+                                    width={800}
+                                    onCancel={() => setVisiblePayment(false)}
+                                    footer={null} title={'Payment'}>
+                                    <table className="w-full table-bordered mb-4">
+                                        <tbody>
+                                        <tr>
+                                            <td className="p-3">Total Items {cart?.length}</td>
+                                            <td className="p-3">Total Payable ${total.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="p-3">Card Balance ${balance.toFixed(2)}</td>
+                                            <td className="p-3">Total paying $0.00</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <Form layout="vertical" form={paymentForm} onFinish={handlePaymentSubmit}>
+                                        <Row>
+                                            <Col md={6}>
+                                                <FormInput name="credit" label="Credit Amount" type="number" readOnly/>
+                                            </Col>
+                                            <Col md={6}>
+                                                <FormInput name="password" label="Card Password"
+                                                           style={{webkitTextSecurity: 'disc',}} autoComplete="off"
+                                                           required/>
+                                            </Col>
+                                        </Row>
+                                        <FormInput name="note" label="Note" textArea/>
+                                        <Button>Submit</Button>
+                                    </Form>
+                                </Modal>
                             </div>
-                            <div>
-                                <table className="w-full mt-3.5">
-                                    <tbody>
-                                    <tr className="text-xs font-semibold uppercase text-gray-500 bg-gray-50">
-                                        <td className="border-none p-2 text-gray-500">{i18n.t('Total Items')}</td>
-                                        <td className="border-none p-2 text-gray-500 text-right">{cart?.length}</td>
-                                        <td className="border-none p-2 text-gray-500">{i18n.t('Total')} </td>
-                                        <td className="border-none p-2 text-gray-500 text-end">{total.toFixed(2)}</td>
-                                    </tr>
-                                    <tr className="text-xs font-semibold uppercase text-gray-500 bg-blue-400">
-                                        <td className="border-none p-2 text-white"
-                                            colSpan={2}>{i18n.t('Total Payable')}</td>
-                                        <td className="border-none p-2 text-white text-right"
-                                            colSpan={2}>{total.toFixed(2)}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <Modal
-                                visible={visiblePayment}
-                                width={800}
-                                onCancel={() => setVisiblePayment(false)}
-                                footer={null} title={i18n.t('Payment')}>
-                                <table className="w-full table-bordered mb-4">
-                                    <tbody>
-                                    <tr>
-                                        <td className="p-3">{i18n.t('Total Items')} {cart?.length}</td>
-                                        <td className="p-3">{i18n.t('Total Payable')} ${total.toFixed(2)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="p-3">{i18n.t('Card Balance')} ${balance.toFixed(2)}</td>
-                                        <td className="p-3">{i18n.t('Total paying')} $0.00</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <Form layout="vertical" form={paymentForm} onFinish={handlePaymentSubmit}>
-                                    <Row>
-                                        <Col md={6}>
-                                            <FormInput name="credit" label="Credit Amount" type="number" readOnly/>
-                                        </Col>
-                                        <Col md={6}>
-                                            <FormInput name="password" label="Card Password"
-                                                       style={{webkitTextSecurity: 'disc',}} autoComplete="off" required/>
-                                        </Col>
-                                    </Row>
-                                    <FormInput name="note" label="Note" textArea/>
-                                    <Button>Submit</Button>
-                                </Form>
-                            </Modal>
-                        </div>
-                        <div className="flex mt-4 rounded overflow-hidden">
-                            <button
-                                onClick={handleCancel}
-                                className="w-1/2 btn-danger h-10">
-                                {i18n.t('Cancel')}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    if(total <= balance) {
-                                        paymentForm.resetFields()
-                                        paymentForm.setFieldsValue({credit: total})
-                                        setVisiblePayment(true)
-                                    } else {
-                                        antdAlert.warning('Insufficient balance', '')
-                                    }
+                            <div className="flex mt-4 rounded overflow-hidden">
+                                <button
+                                    onClick={handleCancel}
+                                    className="w-1/2 btn-danger h-10">
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        if (total <= balance) {
+                                            paymentForm.resetFields()
+                                            paymentForm.setFieldsValue({credit: total})
+                                            setVisiblePayment(true)
+                                        } else {
+                                            antdAlert.warning('Insufficient balance', '')
+                                        }
 
-                                }}
-                                className="w-1/2 bg-main hover:bg-main2 text-white h-10">
-                                {i18n.t('Payment')}
-                            </button>
+                                    }}
+                                    className="w-1/2 bg-main hover:bg-main2 text-white h-10">
+                                    Payment
+                                </button>
+                            </div>
                         </div>
                     </Card>
                 </Col>

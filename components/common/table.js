@@ -4,10 +4,8 @@ import {useActionConfirm} from "../../helpers/hooks";
 import ReactPaginate from "react-paginate";
 import {Modal} from "antd";
 import {useState} from "react";
-import {Loader} from "./preloader";
 import {useUserContext} from "../../contexts/user";
 import {havePermission} from "../../layouts/user";
-import {useI18n} from "../../contexts/i18n";
 
 const Table = ({
                    columns,

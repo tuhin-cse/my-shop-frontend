@@ -6,7 +6,6 @@ import {fetchPurchaseElements, fetchPurchases, postPurchase, postPurchaseStatus}
 import Table from "../../../components/common/table";
 import {FiCheck, FiEdit, FiX} from "react-icons/fi";
 import {useRouter} from "next/router";
-import {useI18n} from "../../../contexts/i18n";
 import {Form, Modal, Select} from "antd";
 import {useState} from "react";
 import FormInput, {HiddenFormItem} from "../../../components/form/input";
@@ -15,7 +14,6 @@ import moment from "moment";
 
 const Purchases = () => {
     const [form] = Form.useForm()
-    const i18n = useI18n()
     const router = useRouter()
     const user = useUserContext()
     const manager = havePermission('purchase_management', user?.roles)
@@ -50,17 +48,17 @@ const Purchases = () => {
     if (admin || manager) {
         columns.push({dataField: 'total_fee', text: 'fee', formatter: d => d?.toFixed(2)})
     }
-    columns.push({dataField: 'method', text: 'Method', className: 'text-capitalize', formatter: d => i18n.t(d)})
+    columns.push({dataField: 'method', text: 'Method', className: 'text-capitalize'})
     columns.push({
         dataField: 'order_status',
         text: 'Status',
-        formatter: d => <button className={status[d] || ''}>{i18n.t(d)}</button>
+        formatter: d => <button className={status[d] || ''}>{d}</button>
     })
 
     return (
         <>
             <PageTitle title="Purchases"/>
-            <Modal visible={visible} onCancel={() => setVisible(false)} title={i18n.t('Update Purchase')} footer={null}>
+            <Modal visible={visible} onCancel={() => setVisible(false)} title={'Update Purchase'} footer={null}>
                 <Form layout="vertical" form={form} onFinish={values => {
                     setVisible(false)
                     return useAction(postPurchase, {
@@ -85,7 +83,7 @@ const Purchases = () => {
                         {elements?.shops?.length > 0 && (
                             <Select
                                 className="w-44 select-38 me-3"
-                                placeholder={i18n.t('Shop')}
+                                placeholder={'Shop'}
                                 onClear={() => {
                                     getPurchases({shop: undefined})
                                 }}
@@ -97,7 +95,7 @@ const Purchases = () => {
                         {elements?.companies?.length > 0 && (
                             <Select
                                 className="w-44 select-38 me-3"
-                                placeholder={i18n.t('Company')}
+                                placeholder={'Company'}
                                 onClear={() => {
                                     getPurchases({company: undefined})
                                 }}
@@ -160,7 +158,6 @@ const Purchases = () => {
                                         () => getPurchases(),
                                         "Are you sure want cancel the purchase?",
                                         'Yes, Cancel',
-                                        i18n.t
                                     )
                                 }
                                 className="btn btn-danger btn-sm ms-2"
@@ -176,11 +173,10 @@ const Purchases = () => {
                                             () => getPurchases(),
                                             "Are you sure want to accept the purchase?",
                                             'Yes, Accept',
-                                            i18n.t
                                         )
                                     }
                                     className="btn btn-success btn-sm"
-                                >{i18n.t("Complete")}
+                                >{"Complete"}
                                 </button>
                             </>
                         )}

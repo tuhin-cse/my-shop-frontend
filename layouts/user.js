@@ -19,7 +19,6 @@ import {fetchProfile} from "../helpers/backend_helper";
 import {useRouter} from "next/router";
 import UserContext from "../contexts/user";
 import {Loader} from "../components/common/preloader";
-import I18nContext, {initI18n} from "../contexts/i18n";
 
 const UserLayout = ({children}) => {
     const router = useRouter()
@@ -56,9 +55,8 @@ const UserLayout = ({children}) => {
             <div className="dashboard">
                 <Sidebar menu={menu}/>
                 <Header/>
-                <div className="absolute top-0 h-32 w-full sm:bg-main"/>
                 <div className="main-content">
-                    <div className="w-full sm:p-6 z-30" style={{minHeight: 400}}>
+                    <div className="w-full sm:px-6 sm:my-4 z-30" style={{minHeight: 400}}>
                         {children}
                     </div>
                 </div>

@@ -1,7 +1,6 @@
 import {useState} from "react"
 import {Form} from 'antd'
 import {BiLockAlt, BiLockOpenAlt} from "react-icons/bi";
-import {useI18n} from "../../contexts/i18n";
 
 const PasswordInputField = ({value, onChange, prefix, placeholder}) => {
     const [visible, setVisible] = useState(false)
@@ -36,7 +35,6 @@ const PasswordInput = ({
                            placeholder,
                            dependency = 'password'
                        }) => {
-    const i18n = useI18n()
     let rules = [
         {required, message: 'Please enter a password'},
         {min: confirm ? 0 : min, message: 'Password must be at least 6 characters'}
@@ -64,7 +62,7 @@ const PasswordInput = ({
     }
 
     return (
-        <Form.Item name={name} label={!!i18n.t ? i18n.t(label) : label} rules={rules} initialValue="">
+        <Form.Item name={name} label={label} rules={rules} initialValue="">
             <PasswordInputField placeholder={placeholder}/>
         </Form.Item>
     )
