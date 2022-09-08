@@ -11,7 +11,6 @@ import {uploadImage} from "../../../helpers/image";
 import {useAction, useFetch} from "../../../helpers/hooks";
 import {fetchCategory, postCategory} from "../../../helpers/backend_helper";
 import {useRouter} from "next/router";
-import {useI18n} from "../../../contexts/i18n";
 
 const AddCategory = () => {
     const {query} = useRouter()
@@ -36,11 +35,10 @@ AddCategory.layout = UserLayout
 export default AddCategory
 
 export const CategoryForm = ({form, image, setImage, parent}) => {
-    const i18n = useI18n()
     const {push} = useRouter()
     return (
         <>
-            <div className="w-full md:w-1/2 mx-auto">
+            <div className="w-full md:w-1/2">
                 <Card>
                     <Form form={form} layout="vertical" onFinish={async values => {
                         values.image = await uploadImage(values.image, image)
@@ -53,7 +51,7 @@ export const CategoryForm = ({form, image, setImage, parent}) => {
                                     initialValue={true}
                                     options={[{label: 'Active', value: true}, {label: 'Inactive', value: false}]}
                                     required/>
-                        <Form.Item name="image" label={i18n.t("Category Image")}>
+                        <Form.Item name="image" label={"Category Image"}>
                             <ImageInput onSelect={setImage}/>
                         </Form.Item>
                         <img className="h-28 pb-4" src={image} alt=""/>

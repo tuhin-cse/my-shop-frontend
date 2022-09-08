@@ -1,19 +1,17 @@
-import Link from "next/link";
 import Head from "next/head";
 import {useSite} from "../../contexts/site";
-import {useI18n} from "../../contexts/i18n";
 
 const PageTitle = ({title, breadcrumbs = [], appTitle, hidden = false}) => {
-    const i18n = useI18n()
     const site = useSite()
 
     return (
         <>
             <Head>
-                <title>{!!i18n.t ? i18n.t(appTitle || title) : appTitle || title} | {site?.site_name}</title>
+                <title>{appTitle || title} | {site?.shop_name}</title>
             </Head>
-            <div className="bg-white px-6 py-3 rounded flex justify-between item-center shadow-sm mb-6" style={{display: hidden ? 'none': 'block'}}>
-                <h1 className="text-xl font-semibold text-gray-600 tracking-wider">{!!i18n.t ? i18n.t(title) : title}</h1>
+            <div className="bg-white px-6 py-3 rounded flex justify-between item-center shadow-sm mb-6"
+                 style={{display: hidden ? 'none' : 'block'}}>
+                <h1 className="text-xl font-semibold text-gray-600 tracking-wider">{title}</h1>
                 {/*<ul className="hidden sm:block">*/}
                 {/*    {breadcrumbs?.map((item, index) => (*/}
                 {/*        <li key={index} className="inline-block text-sm text-gray-500">*/}

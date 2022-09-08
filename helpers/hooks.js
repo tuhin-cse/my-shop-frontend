@@ -48,27 +48,26 @@ export const useFetch = (func, query, load = true) => {
     return [data, getData, {query: params, loading, error, errorMessage}];
 }
 
-export const useAction = async (func, data, reload, alert = true, t) => {
+export const useAction = async (func, data, reload, alert = true) => {
     showLoader()
     const {error, msg, data: d} = await func({...data})
     hideLoader()
-    console.log(t)
     if (error === false) {
         if (reload) {
             reload(d)
         }
         if (alert) {
-            await swalAlert.success(!!t ? t(msg) : msg, t)
+            await swalAlert.success( msg)
         }
     } else {
-        await swalAlert.error(!!t ? t(msg) : msg, t)
+        await swalAlert.error(msg)
     }
 }
 
-export const useActionConfirm = async (func, data, reload, message, confirmText, t, alert = true) => {
-    const {isConfirmed} = await swalAlert.confirm(t ? t(message) : message, t ? t(confirmText) : confirmText, t)
+export const useActionConfirm = async (func, data, reload, message, confirmText, alert = true) => {
+    const {isConfirmed} = await swalAlert.confirm( message,  confirmText)
     if (isConfirmed) {
-        await useAction(func, data, reload, alert, t)
+        await useAction(func, data, reload, alert)
     }
 }
 

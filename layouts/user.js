@@ -25,7 +25,6 @@ const UserLayout = ({children}) => {
     const router = useRouter()
     const [user, setUser] = useState()
 
-    const i18n = initI18n()
 
     useEffect(() => {
         getProfile()
@@ -53,21 +52,18 @@ const UserLayout = ({children}) => {
     }
 
     return (
-        <I18nContext.Provider value={i18n}>
-            <UserContext.Provider value={{...user, getProfile}}>
-                <div className="dashboard">
-                    <Sidebar menu={menu}/>
-                    <Header/>
-                    <div className="absolute top-0 h-32 w-full sm:bg-main"/>
-                    <div className="main-content">
-                        <div className="w-full sm:p-6 z-30" style={{minHeight: 400}}>
-                            {children}
-                        </div>
+        <UserContext.Provider value={{...user, getProfile}}>
+            <div className="dashboard">
+                <Sidebar menu={menu}/>
+                <Header/>
+                <div className="absolute top-0 h-32 w-full sm:bg-main"/>
+                <div className="main-content">
+                    <div className="w-full sm:p-6 z-30" style={{minHeight: 400}}>
+                        {children}
                     </div>
                 </div>
-            </UserContext.Provider>
-        </I18nContext.Provider>
-
+            </div>
+        </UserContext.Provider>
     )
 }
 export default UserLayout
@@ -205,7 +201,7 @@ const getMenu = user => {
         return false
     }
     return menu?.map(d => ({...d})).filter(menu => {
-        if (+user?.profile?.is_owner === 1) {
+        if (user?.admin === true) {
             return true
         } else if (menu?.permission === 'any') {
             return true

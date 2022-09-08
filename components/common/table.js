@@ -29,9 +29,11 @@ const Table = ({
                    afterSearch,
                }) => {
 
-    const i18n = useI18n()
-    const {roles} = useUserContext()
+    const {roles, admin} = useUserContext()
     const checkPermissions = name => {
+        if(admin) {
+            return admin
+        }
         if (permission) {
             return havePermission(name, roles)
         }
@@ -65,7 +67,7 @@ const Table = ({
                             await useActionConfirm(
                                 onDelete,
                                 {_id: data._id},
-                                onReload, 'Are you sure you want to delete this item?', 'Yes, Delete', i18n.t)
+                                onReload, 'Are you sure you want to delete this item?', 'Yes, Delete')
                         }}>
                             <FaTrashAlt/>
                         </button>
@@ -109,7 +111,7 @@ const Table = ({
                                 {cols?.map((column, index) => (
                                     <th className="p-2 whitespace-nowrap" key={index}>
                                         <div
-                                            className={`font-semibold ${column?.className}`}>{i18n.t(column.text)}</div>
+                                            className={`font-semibold ${column?.className}`}>{column.text}</div>
                                         <div style={{fontSize: 10}}>{column.description}</div>
                                     </th>
                                 ))}
@@ -152,13 +154,13 @@ const Table = ({
                             </p>
                             <ReactPaginate
                                 breakLabel="..."
-                                previousLabel={i18n.t('Previous')}
+                                previousLabel={'Previous'}
                                 disabledLinkClassName="text-gray-300"
                                 previousLinkClassName="text-sm bg-gray-100  hover:bg-gray-200 text-gray-600 font-semibold py-2 px-4 rounded-l"
                                 nextLinkClassName="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-2 px-4 rounded-r"
                                 pageLinkClassName="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-2 px-4"
                                 activeLinkClassName="text-primary"
-                                nextLabel={i18n.t('Next')}
+                                nextLabel={'Next'}
                                 className="flex"
                                 onPageChange={({selected}) => onReload({page: selected + 1})}
                                 pageRangeDisplayed={5}
